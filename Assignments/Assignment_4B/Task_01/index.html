@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignment 4B - Task 01: Analyse and Validate a Mobile Operating System Model</title>
+  <style>
+
+:root {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-card: #1e293b;
+  --bg-card-hover: #273548;
+  --border-color: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --purple: #8b5cf6;
+  --cyan: #06b6d4;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  padding: 24px;
+  min-height: 100vh;
+}
+.container { max-width: 1300px; margin: 0 auto; }
+header {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.badge-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.badge-blue { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+.badge-green { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+.badge-purple { background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.4); }
+.badge-amber { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+
+h1 { font-size: 1.85rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.subtitle { color: var(--text-secondary); font-size: 0.95rem; }
+
+.nav-controls { display: flex; gap: 10px; align-items: center; }
+.btn {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.btn:hover { background: var(--bg-card-hover); border-color: var(--accent); }
+.btn-primary { background: var(--accent); color: white; border: none; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-success { background: var(--success); color: white; border: none; }
+.btn-success:hover { opacity: 0.9; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+@media (max-width: 900px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.card h2 {
+  font-size: 1.15rem;
+  margin-bottom: 14px;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+.metric-box {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-color);
+  padding: 14px;
+  border-radius: 8px;
+  text-align: center;
+}
+.metric-value { font-size: 1.6rem; font-weight: 700; color: var(--accent); margin-top: 4px; }
+.metric-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; }
+
+.control-group { margin-bottom: 16px; }
+.control-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.control-group input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+.control-group select, .control-group input[type="number"], .control-group input[type="text"] {
+  width: 100%;
+  background: #0f172a;
+  border: 1px solid var(--border-color);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+.slider-val { float: right; font-weight: 600; color: var(--accent); }
+
+pre.pseudocode {
+  background: #0b1120;
+  color: #38bdf8;
+  padding: 16px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  border: 1px solid #1e293b;
+  max-height: 380px;
+}
+pre.log-terminal {
+  background: #090d16;
+  color: #a3e635;
+  padding: 14px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+}
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 0.875rem;
+}
+table.data-table th, table.data-table td {
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  text-align: left;
+}
+table.data-table th { background: rgba(30, 41, 59, 0.8); color: #cbd5e1; font-weight: 600; }
+table.data-table tr:hover { background: rgba(51, 65, 85, 0.3); }
+
+canvas {
+  background: #0b1120;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  width: 100%;
+  height: 360px;
+  display: block;
+}
+
+.math-block {
+  background: rgba(30, 41, 59, 0.5);
+  border-left: 3px solid var(--accent);
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: #e2e8f0;
+}
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+.tab-btn {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <div class="badge-group">
+          <span class="badge badge-blue">Mobile Systems Engineering (CO4 Part II)</span>
+          <span class="badge badge-purple">Assignment 4B</span>
+          <span class="badge badge-green">Task 01 / 06</span>
+          <span class="badge badge-amber">8 Marks</span>
+        </div>
+        <h1>Task 01: Analyse and Validate a Mobile Operating System Model</h1>
+        <div class="subtitle">Inside the OS: Android vs iOS resource-management engine, dumpsys meminfo, oom_adj priority, and lifecycle state management</div>
+      </div>
+      <div class="nav-controls">
+        <a href="../../index.html" class="btn">🏠 Master Hub</a>
+        <a href="../../index.html" class="btn">⬅️ Previous</a>
+        <a href="../Task_02/index.html" class="btn btn-primary">Next ➡️</a>
+      </div>
+    </header>
+
+    
+<div class="grid-2">
+  <div class="card">
+    <h2>⚙️ Android vs iOS: Resource-Management Engine & Architecture (3 Marks)</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Subsystem</th>
+          <th>Android (Linux Kernel + ART)</th>
+          <th>iOS (XNU Darwin + Cocoa Touch)</th>
+          <th>Observed Shell / System Evidence</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Process Creation</strong></td>
+          <td>Forked from warmed-up <code>zygote64</code> daemon</td>
+          <td>Spawned directly via <code>launchd</code> daemon</td>
+          <td><code>adb shell ps -A | grep zygote</code></td>
+        </tr>
+        <tr>
+          <td><strong>Inter-Process Comm</strong></td>
+          <td>OpenBinder via <code>/dev/binder</code> ioctl memory mapping</td>
+          <td>XPC services over Mach Message ports</td>
+          <td><code>cat /proc/binder/stats</code></td>
+        </tr>
+        <tr>
+          <td><strong>Memory Priority</strong></td>
+          <td><code>oom_score_adj</code> (-1000 to +1000)</td>
+          <td>Jetsam memory priority bands (0 to 19)</td>
+          <td><code>cat /proc/&lt;PID&gt;/oom_score_adj</code></td>
+        </tr>
+        <tr>
+          <td><strong>Component Lifecycle</strong></td>
+          <td>Activity / Service / BroadcastReceiver / ContentProvider</td>
+          <td>UIViewController & UIApplication lifecycle states</td>
+          <td><code>dumpsys activity processes</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>📟 Runtime State Inspector & Memory Pressure Simulator (3 Marks)</h2>
+    <div class="control-group">
+      <label>Application State & Memory Condition:</label>
+      <select id="osCondition" onchange="runOSSim()">
+        <option value="fg" selected>1. Active Foreground (Visible UI)</option>
+        <option value="bg5">2. Background for 5 Minutes (Cached)</option>
+        <option value="trim">3. System Low-Memory Emulation (TRIM_MEMORY_RUNNING_CRITICAL)</option>
+        <option value="oom">4. Severe RAM Exhaustion (Out-Of-Memory Pressure)</option>
+      </select>
+    </div>
+
+    <div class="grid-3" style="margin-top: 14px;">
+      <div class="metric-box">
+        <div class="metric-label">oom_score_adj</div>
+        <div class="metric-value" style="color: #10b981;" id="m-oom">0</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">Process State</div>
+        <div class="metric-value" id="m-proc-state">FOREGROUND</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">Last Callback</div>
+        <div class="metric-value" id="m-callback">onResume()</div>
+      </div>
+    </div>
+
+    <div class="metric-box" style="margin-top: 12px; background: rgba(59, 130, 246, 0.1); border-color: var(--accent);">
+      <div class="metric-label">Saved Instance State Restoration</div>
+      <div class="metric-value" style="color: #60a5fa; font-size: 1.15rem;" id="m-state-rest">Retained in RAM</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>🔄 Task 1.4: Boundary Test Case Design (1 Mark)</h2>
+  <div class="math-block">
+    <strong>Selected Boundary Case: Screen Configuration Change (Rotation) During Async HTTP Upload:</strong><br>
+    • <em>Vulnerability:</em> In naive Android code, rotating the screen destroys and recreates the `Activity` (`onDestroy()` &rarr; `onCreate()`). If an asynchronous background task retains a reference to the old Activity, it causes a <strong>Context Memory Leak</strong>, and the callback tries to update destroyed views, crashing the app with an `IllegalStateException`.<br>
+    • <em>Architectural Fix:</em> Decouple work using Android Architecture Components: perform execution inside an Architecture `ViewModel` with `StateFlow` or defer to `WorkManager`, surviving configuration changes safely.
+  </div>
+</div>
+
+
+  </div>
+
+  <script>
+
+function runOSSim() {
+  const cond = document.getElementById('osCondition').value;
+  let oom = 0, state = "FOREGROUND", callback = "onResume()", rest = "Retained in RAM";
+
+  if (cond === 'fg') {
+    oom = 0; state = "FOREGROUND"; callback = "onResume()"; rest = "Retained in Active RAM";
+  } else if (cond === 'bg5') {
+    oom = 905; state = "CACHED_EMPTY"; callback = "onStop()"; rest = "Saved to Bundle (onSaveInstanceState)";
+  } else if (cond === 'trim') {
+    oom = 920; state = "TRIMMED"; callback = "onTrimMemory(80)"; rest = "Bitmap Cache Evicted; State in Bundle";
+  } else {
+    // oom
+    oom = 1000; state = "KILLED_BY_LMKD"; callback = "onDestroy() [SKIPPED on LMK kill]"; rest = "Restored from Bundle on next launch";
+  }
+
+  document.getElementById('m-oom').innerText = oom;
+  document.getElementById('m-proc-state').innerText = state;
+  document.getElementById('m-callback').innerText = callback;
+  document.getElementById('m-state-rest').innerText = rest;
+}
+
+window.onload = function() {
+  runOSSim();
+};
+
+  </script>
+</body>
+</html>

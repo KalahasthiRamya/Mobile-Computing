@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignment 1 - Task 03: Derive the Capacity and Interference Functions Mathematically</title>
+  <style>
+
+:root {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-card: #1e293b;
+  --bg-card-hover: #273548;
+  --border-color: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --purple: #8b5cf6;
+  --cyan: #06b6d4;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  padding: 24px;
+  min-height: 100vh;
+}
+.container { max-width: 1300px; margin: 0 auto; }
+header {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.badge-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.badge-blue { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+.badge-green { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+.badge-purple { background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.4); }
+.badge-amber { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+
+h1 { font-size: 1.85rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.subtitle { color: var(--text-secondary); font-size: 0.95rem; }
+
+.nav-controls { display: flex; gap: 10px; align-items: center; }
+.btn {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.btn:hover { background: var(--bg-card-hover); border-color: var(--accent); }
+.btn-primary { background: var(--accent); color: white; border: none; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-success { background: var(--success); color: white; border: none; }
+.btn-success:hover { opacity: 0.9; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+@media (max-width: 900px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.card h2 {
+  font-size: 1.15rem;
+  margin-bottom: 14px;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+.metric-box {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-color);
+  padding: 14px;
+  border-radius: 8px;
+  text-align: center;
+}
+.metric-value { font-size: 1.6rem; font-weight: 700; color: var(--accent); margin-top: 4px; }
+.metric-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; }
+
+.control-group { margin-bottom: 16px; }
+.control-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.control-group input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+.control-group select, .control-group input[type="number"], .control-group input[type="text"] {
+  width: 100%;
+  background: #0f172a;
+  border: 1px solid var(--border-color);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+.slider-val { float: right; font-weight: 600; color: var(--accent); }
+
+pre.pseudocode {
+  background: #0b1120;
+  color: #38bdf8;
+  padding: 16px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  border: 1px solid #1e293b;
+  max-height: 380px;
+}
+pre.log-terminal {
+  background: #090d16;
+  color: #a3e635;
+  padding: 14px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+}
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 0.875rem;
+}
+table.data-table th, table.data-table td {
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  text-align: left;
+}
+table.data-table th { background: rgba(30, 41, 59, 0.8); color: #cbd5e1; font-weight: 600; }
+table.data-table tr:hover { background: rgba(51, 65, 85, 0.3); }
+
+canvas {
+  background: #0b1120;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  width: 100%;
+  height: 360px;
+  display: block;
+}
+
+.math-block {
+  background: rgba(30, 41, 59, 0.5);
+  border-left: 3px solid var(--accent);
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: #e2e8f0;
+}
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+.tab-btn {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <div class="badge-group">
+          <span class="badge badge-blue">Mobile Computing (CO1)</span>
+          <span class="badge badge-purple">Assignment 1</span>
+          <span class="badge badge-green">Task 03 / 12</span>
+          <span class="badge badge-amber">6 Marks</span>
+        </div>
+        <h1>Task 03: Derive the Capacity and Interference Functions Mathematically</h1>
+        <div class="subtitle">Exact derivations of hex geometry, Erlang-B capacity, and SIR expressions for omni and sectored arrays</div>
+      </div>
+      <div class="nav-controls">
+        <a href="../../index.html" class="btn">🏠 Master Hub</a>
+        <a href="../Task_02/index.html" class="btn">⬅️ Previous</a>
+        <a href="../Task_04/index.html" class="btn btn-primary">Next ➡️</a>
+      </div>
+    </header>
+
+    
+<div class="grid-2">
+  <div class="card">
+    <h2>📐 Mathematical Derivations Step-by-Step</h2>
+    
+    <div class="math-block">
+      <strong>1. Hexagonal Geometry & Township Coverage:</strong><br>
+      Hexagon cell area: $A_{cell} = \frac{3\sqrt{3}}{2} R^2 \approx 2.5981 \cdot R^2\text{ km}^2$.<br>
+      For township area $A_{town} = 12\text{ km}^2$, total cells required:<br>
+      $$N_c = \left\lceil \frac{12}{2.5981 \cdot R^2} \right\rceil$$
+    </div>
+
+    <div class="math-block">
+      <strong>2. Frequency Reuse Distance & Ratio:</strong><br>
+      Reuse distance between co-channel cell centers:<br>
+      $$D = R\sqrt{3N}, \quad Q = \frac{D}{R} = \sqrt{3N}$$
+    </div>
+
+    <div class="math-block">
+      <strong>3. Channels & Traffic per Cell (Erlang-B at 2% GOS):</strong><br>
+      Total channels $S = 336$. Channels per cell $C = \lfloor S / N \rfloor$.<br>
+      Blocking probability given offered load $A$ Erlangs:<br>
+      $$B(C, A) = \frac{\frac{A^C}{C!}}{\sum_{k=0}^C \frac{A^k}{k!}} = 0.02$$
+      Subscribers per cell: $M_{cell} = \frac{A}{0.025}$. Total system subscribers $M_{sys} = N_c \cdot M_{cell}$.
+    </div>
+
+    <div class="math-block">
+      <strong>4. Co-Channel SIR Expression:</strong><br>
+      $$SIR = \frac{P_r}{\sum_{i=1}^{M_I} I_i} = \frac{R^{-n}}{M_I \cdot D^{-n}} = \frac{1}{M_I}\left(\frac{D}{R}\right)^n = \frac{(\sqrt{3N})^n}{M_I}$$
+      In decibels: $SIR_{dB} = 10 \log_{10}\left(\frac{(\sqrt{3N})^n}{M_I}\right)$.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🧮 Interactive Derivation Calculator</h2>
+    
+    <div class="control-group">
+      <label>Cluster Size N:</label>
+      <select id="calcN" onchange="runTask3Calc()">
+        <option value="3">N = 3 (Q = 3.00)</option>
+        <option value="4">N = 4 (Q = 3.46)</option>
+        <option value="7" selected>N = 7 (Q = 4.58)</option>
+        <option value="12">N = 12 (Q = 6.00)</option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label>Cell Radius R (km): <span class="slider-val" id="valR">0.8 km</span></label>
+      <input type="range" id="sliderR" min="0.2" max="2.0" step="0.05" value="0.8" oninput="runTask3Calc()">
+    </div>
+
+    <div class="control-group">
+      <label>Path Loss Exponent n: <span class="slider-val" id="valNExp">3.5</span></label>
+      <input type="range" id="sliderNExp" min="2.5" max="4.0" step="0.1" value="3.5" oninput="runTask3Calc()">
+    </div>
+
+    <div class="control-group">
+      <label>Sectoring (Antenna Type):</label>
+      <select id="calcSector" onchange="runTask3Calc()">
+        <option value="6">Omnidirectional (M_I = 6 interferers)</option>
+        <option value="2" selected>120° Sectoring (M_I = 2 interferers)</option>
+        <option value="1">60° Sectoring (M_I = 1 interferer)</option>
+      </select>
+    </div>
+
+    <div class="grid-2" style="margin-top: 16px;">
+      <div class="metric-box">
+        <div class="metric-label">Cells Required (12 km²)</div>
+        <div class="metric-value" id="resCells">8</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">Channels / Cell (C)</div>
+        <div class="metric-value" id="resChannels">48</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">Erlang Capacity (2% GOS)</div>
+        <div class="metric-value" id="resErlang">38.4 E</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">Calculated SIR</div>
+        <div class="metric-value" id="resSIR">20.8 dB</div>
+      </div>
+    </div>
+
+    <div class="metric-box" style="margin-top: 12px; background: rgba(59, 130, 246, 0.1); border-color: var(--accent);">
+      <div class="metric-label">Total Township Subscriber Capacity</div>
+      <div class="metric-value" style="color: #60a5fa;" id="resSubs">12,288 Users</div>
+    </div>
+  </div>
+</div>
+
+
+  </div>
+
+  <script>
+
+// Numerical Erlang-B inverter
+function erlangB(C, A) {
+  let B = 1.0;
+  for (let k = 1; k <= C; k++) {
+    B = (A * B) / (k + A * B);
+  }
+  return B;
+}
+
+function findErlangCapacity(C, targetB = 0.02) {
+  let low = 0.1, high = C * 1.5, mid = 0;
+  for (let i = 0; i < 40; i++) {
+    mid = (low + high) / 2;
+    const b = erlangB(C, mid);
+    if (b < targetB) low = mid;
+    else high = mid;
+  }
+  return mid;
+}
+
+function runTask3Calc() {
+  const N = parseInt(document.getElementById('calcN').value);
+  const R = parseFloat(document.getElementById('sliderR').value);
+  const n = parseFloat(document.getElementById('sliderNExp').value);
+  const MI = parseInt(document.getElementById('calcSector').value);
+
+  document.getElementById('valR').innerText = R.toFixed(2) + " km";
+  document.getElementById('valNExp').innerText = n.toFixed(1);
+
+  const cellArea = (3 * Math.sqrt(3) / 2) * Math.pow(R, 2);
+  const Nc = Math.ceil(12 / cellArea);
+  const C = Math.floor(336 / N);
+
+  const erlangPerCell = findErlangCapacity(C, 0.02);
+  const totalSubscribers = Math.round((Nc * erlangPerCell) / 0.025);
+
+  const Q = Math.sqrt(3 * N);
+  const sirLinear = Math.pow(Q, n) / MI;
+  const sirDB = (10 * Math.log10(sirLinear)).toFixed(1);
+
+  document.getElementById('resCells').innerText = Nc;
+  document.getElementById('resChannels').innerText = C;
+  document.getElementById('resErlang').innerText = erlangPerCell.toFixed(1) + " E";
+  document.getElementById('resSIR').innerText = sirDB + " dB";
+  document.getElementById('resSubs').innerText = totalSubscribers.toLocaleString() + " Users";
+}
+
+window.onload = function() {
+  runTask3Calc();
+};
+
+  </script>
+</body>
+</html>

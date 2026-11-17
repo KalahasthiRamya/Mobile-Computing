@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignment 1 - Task 01: Design Alternative Frequency-Planning Strategies</title>
+  <style>
+
+:root {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-card: #1e293b;
+  --bg-card-hover: #273548;
+  --border-color: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --purple: #8b5cf6;
+  --cyan: #06b6d4;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  padding: 24px;
+  min-height: 100vh;
+}
+.container { max-width: 1300px; margin: 0 auto; }
+header {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.badge-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.badge-blue { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+.badge-green { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+.badge-purple { background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.4); }
+.badge-amber { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+
+h1 { font-size: 1.85rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.subtitle { color: var(--text-secondary); font-size: 0.95rem; }
+
+.nav-controls { display: flex; gap: 10px; align-items: center; }
+.btn {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.btn:hover { background: var(--bg-card-hover); border-color: var(--accent); }
+.btn-primary { background: var(--accent); color: white; border: none; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-success { background: var(--success); color: white; border: none; }
+.btn-success:hover { opacity: 0.9; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+@media (max-width: 900px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.card h2 {
+  font-size: 1.15rem;
+  margin-bottom: 14px;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+.metric-box {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-color);
+  padding: 14px;
+  border-radius: 8px;
+  text-align: center;
+}
+.metric-value { font-size: 1.6rem; font-weight: 700; color: var(--accent); margin-top: 4px; }
+.metric-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; }
+
+.control-group { margin-bottom: 16px; }
+.control-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.control-group input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+.control-group select, .control-group input[type="number"], .control-group input[type="text"] {
+  width: 100%;
+  background: #0f172a;
+  border: 1px solid var(--border-color);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+.slider-val { float: right; font-weight: 600; color: var(--accent); }
+
+pre.pseudocode {
+  background: #0b1120;
+  color: #38bdf8;
+  padding: 16px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  border: 1px solid #1e293b;
+  max-height: 380px;
+}
+pre.log-terminal {
+  background: #090d16;
+  color: #a3e635;
+  padding: 14px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+}
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 0.875rem;
+}
+table.data-table th, table.data-table td {
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  text-align: left;
+}
+table.data-table th { background: rgba(30, 41, 59, 0.8); color: #cbd5e1; font-weight: 600; }
+table.data-table tr:hover { background: rgba(51, 65, 85, 0.3); }
+
+canvas {
+  background: #0b1120;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  width: 100%;
+  height: 360px;
+  display: block;
+}
+
+.math-block {
+  background: rgba(30, 41, 59, 0.5);
+  border-left: 3px solid var(--accent);
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: #e2e8f0;
+}
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+.tab-btn {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <div class="badge-group">
+          <span class="badge badge-blue">Mobile Computing (CO1)</span>
+          <span class="badge badge-purple">Assignment 1</span>
+          <span class="badge badge-green">Task 01 / 12</span>
+          <span class="badge badge-amber">5 Marks</span>
+        </div>
+        <h1>Task 01: Design Alternative Frequency-Planning Strategies</h1>
+        <div class="subtitle">Spatial reuse principles, iterative cluster search, and hierarchical cell splitting for 336 duplex channels</div>
+      </div>
+      <div class="nav-controls">
+        <a href="../../index.html" class="btn">🏠 Master Hub</a>
+        <a href="../../index.html" class="btn">⬅️ Previous</a>
+        <a href="../Task_02/index.html" class="btn btn-primary">Next ➡️</a>
+      </div>
+    </header>
+
+    
+<div class="grid-2">
+  <div class="card">
+    <h2>📋 Guiding Enquiry & Strategy Formulations</h2>
+    <p>How can a fixed block of spectrum (<strong>336 duplex voice channels</strong>) be shared across a 12 km² university township without intolerable co-channel interference?</p>
+    
+    <div style="margin-top: 14px;">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchStrategy('fixed')">1. Fixed Cluster Reuse</button>
+        <button class="tab-btn" onclick="switchStrategy('sector')">2. Sectorised Reuse</button>
+        <button class="tab-btn" onclick="switchStrategy('dynamic')">3. Dynamic/Borrowed (DCA)</button>
+        <button class="tab-btn" onclick="switchStrategy('hierarchical')">4. Recursive Splitting</button>
+      </div>
+
+      <div id="strat-desc" class="math-block">
+        <strong>Strategy 1: Fixed Cluster Reuse (FCA)</strong><br>
+        • <em>Design Principle:</em> Spatial Reuse via regular tessellation ($N = i^2 + ij + j^2$).<br>
+        • <em>Channels per cell:</em> $C = \lfloor 336 / N floor$.<br>
+        • <em>Access Channels:</em> FDMA/TDMA. Control channels (BCCH/CCCH) reserved separately from traffic channels (TCH).<br>
+        • <em>Preprocessing:</em> Propagation survey, terrain clutter map, hex grid layout. Cost borne by network operator.
+      </div>
+    </div>
+
+    <div class="control-group" style="margin-top: 16px;">
+      <label>Cluster Size N ($i^2 + ij + j^2$):</label>
+      <select id="clusterSelect" onchange="updateTask1()">
+        <option value="3">N = 3 (i=1, j=1)</option>
+        <option value="4">N = 4 (i=2, j=0)</option>
+        <option value="7" selected>N = 7 (i=2, j=1)</option>
+        <option value="12">N = 12 (i=2, j=2)</option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label>Sectoring Mode:</label>
+      <select id="sectorSelect" onchange="updateTask1()">
+        <option value="omni">Omnidirectional (360° - 6 interferers)</option>
+        <option value="120">3-Sector (120° - 2 interferers)</option>
+        <option value="60">6-Sector (60° - 1 interferer)</option>
+      </select>
+    </div>
+
+    <div class="grid-3" style="margin-top: 14px;">
+      <div class="metric-box">
+        <div class="metric-label">Channels / Cell</div>
+        <div class="metric-value" id="m-chan">48</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">Reuse Ratio Q</div>
+        <div class="metric-value" id="m-q">4.58</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">Co-Channel Interferers</div>
+        <div class="metric-value" id="m-inter">6</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🗺️ Interactive Hex-Grid Tessellation & Spectrum Allocator</h2>
+    <canvas id="hexCanvas" width="560" height="340"></canvas>
+    <div style="margin-top: 12px; display: flex; gap: 10px;">
+      <button class="btn btn-primary" onclick="simulateTessellation()">⚡ Re-Tessellate Grid</button>
+      <button class="btn" onclick="exportTask1CSV()">📥 Export Channel Map (CSV)</button>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>📜 Algorithmic Pseudocode (SIMATS Standard)</h2>
+  <div class="grid-2">
+    <div>
+      <h3 style="font-size: 0.95rem; margin-bottom: 8px; color: #94a3b8;">Iterative Cluster & Channel Assignment</h3>
+      <pre class="pseudocode">ALGORITHM AssignFixedClusterChannels(TotalChannels, i, j)
+INPUT:
+  TotalChannels – 336 duplex channels
+  i, j – non-negative shift coordinates
+OUTPUT:
+  ClusterSize N, ChannelGroups
+BEGIN
+  N ← (i * i) + (i * j) + (j * j)
+  IF N = 0 THEN
+    RETURN ERROR_INVALID_CLUSTER
+  END IF
+  ChannelsPerCell ← FLOOR(TotalChannels / N)
+  FOR k ← 0 TO N - 1 DO
+    ChannelGroups[k] ← EMPTY_SET
+    FOR ch ← 1 TO TotalChannels DO
+      IF (ch MOD N) = k THEN
+        ADD ch TO ChannelGroups[k]
+      END IF
+    END FOR
+  END FOR
+  RETURN N, ChannelGroups
+END</pre>
+    </div>
+    <div>
+      <h3 style="font-size: 0.95rem; margin-bottom: 8px; color: #94a3b8;">Recursive Hierarchical Cell Splitting</h3>
+      <pre class="pseudocode">ALGORITHM RecursiveCellSplit(Cell, TargetDemand, Radius, Power, MaxDepth)
+INPUT:
+  Cell, TargetDemand, Radius R, TransmitPower P, MaxDepth
+OUTPUT:
+  SubdividedNetworkTree
+BEGIN
+  OfferedTraffic ← ComputeTraffic(Cell)
+  IF OfferedTraffic ≤ Cell.Capacity OR MaxDepth = 0 THEN
+    RETURN Cell  // Demand satisfied without split
+  END IF
+  NewRadius ← Radius / 2
+  NewPower ← Power / (2 ^ PathLossExponent)
+  ChildCells ← GENERATE_4_SUB_HEXAGONS(Cell.Center, NewRadius)
+  FOR each Child in ChildCells DO
+    Child.Power ← NewPower
+    RecursiveCellSplit(Child, TargetDemand / 4, NewRadius, NewPower, MaxDepth - 1)
+  END FOR
+  RETURN ChildCells
+END</pre>
+    </div>
+  </div>
+</div>
+
+
+  </div>
+
+  <script>
+
+const stratDescriptions = {
+  fixed: "<strong>Strategy 1: Fixed Cluster Reuse (FCA)</strong><br>• <em>Design Principle:</em> Spatial Reuse via regular tessellation ($N = i^2 + ij + j^2$).<br>• <em>Trunking Efficiency:</em> Channels divided statically. Low overhead, but vulnerable to uneven traffic bursts.<br>• <em>Preprocessing:</em> Terrain survey, propagation study, fixed hex-grid sizing. Cost borne by network operator.",
+  sector: "<strong>Strategy 2: Sectorised Reuse (120° / 60°)</strong><br>• <em>Design Principle:</em> Spatial Filtering using directional antenna sectors.<br>• <em>Interference:</em> Reduces co-channel interferers from $M_I=6$ to $M_I=2$ ($120^\circ$) or $M_I=1$ ($60^\circ$).<br>• <em>Trade-off:</em> Higher SIR allows smaller cluster size $N$, but trunking efficiency decreases due to sector channel splitting.",
+  dynamic: "<strong>Strategy 3: Dynamic / Borrowed Channel Assignment (DCA)</strong><br>• <em>Design Principle:</em> Adaptive Trunking. Under heavy localized demand, a base station borrows unused channels from neighboring cells without violating co-channel reuse distance $D$.<br>• <em>Preprocessing:</em> Real-time central controller (MSC) signaling and dynamic locking matrix.",
+  hierarchical: "<strong>Strategy 4: Hierarchical Macro-Micro Layering & Recursive Splitting</strong><br>• <em>Design Principle:</em> Geometric Multi-Tier Densification. Overloaded macro-cells ($R=1\text{ km}$) are split recursively into 4 micro-cells ($R/2=500\text{ m}$) with power reduced by $2^n$.<br>• <em>Preprocessing:</em> Microcell site acquisition, street-level micro-survey."
+};
+
+function switchStrategy(strat) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('strat-desc').innerHTML = stratDescriptions[strat];
+}
+
+function updateTask1() {
+  const N = parseInt(document.getElementById('clusterSelect').value);
+  const sector = document.getElementById('sectorSelect').value;
+  const chanPerCell = Math.floor(336 / N);
+  const Q = Math.sqrt(3 * N).toFixed(2);
+  let interferers = 6;
+  if (sector === '120') interferers = 2;
+  if (sector === '60') interferers = 1;
+
+  document.getElementById('m-chan').innerText = chanPerCell;
+  document.getElementById('m-q').innerText = Q;
+  document.getElementById('m-inter').innerText = interferers;
+  drawHexGrid(N);
+}
+
+function drawHexGrid(N) {
+  const canvas = document.getElementById('hexCanvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#14b8a6', '#6366f1', '#e11d48', '#d97706'];
+  const r = 24;
+  const w = Math.sqrt(3) * r;
+  const h = 2 * r * 0.75;
+
+  const cols = 9;
+  const rows = 7;
+  const offsetX = 50;
+  const offsetY = 40;
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const cx = offsetX + col * w + (row % 2) * (w / 2);
+      const cy = offsetY + row * h;
+      const cellClusterId = (col * 3 + row * 2) % N;
+      const isCoChannel = (cellClusterId === 0);
+
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const angle = (Math.PI / 3) * i - Math.PI / 6;
+        const x = cx + r * Math.cos(angle);
+        const y = cy + r * Math.sin(angle);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.fillStyle = isCoChannel ? 'rgba(239, 68, 68, 0.45)' : 'rgba(30, 41, 59, 0.7)';
+      ctx.fill();
+      ctx.strokeStyle = isCoChannel ? '#ef4444' : '#475569';
+      ctx.lineWidth = isCoChannel ? 2 : 1;
+      ctx.stroke();
+
+      ctx.fillStyle = isCoChannel ? '#fca5a5' : '#94a3b8';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(`C${cellClusterId + 1}`, cx, cy);
+    }
+  }
+
+  // Draw legend
+  ctx.fillStyle = '#ef4444';
+  ctx.fillRect(20, canvas.height - 25, 12, 12);
+  ctx.fillStyle = '#f8fafc';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('Channel Group 1 (Co-Channel Reuse Cells)', 38, canvas.height - 15);
+}
+
+function simulateTessellation() {
+  updateTask1();
+}
+
+function exportTask1CSV() {
+  const N = parseInt(document.getElementById('clusterSelect').value);
+  const chanPerCell = Math.floor(336 / N);
+  let csv = "Cluster_Group,Channel_Count,Duplex_Voice_Range,Reuse_Distance_Ratio_Q\n";
+  for (let k = 1; k <= N; k++) {
+    const startCh = (k - 1) * chanPerCell + 1;
+    const endCh = k * chanPerCell;
+    csv += `Group_${k},${chanPerCell},CH_${startCh}-CH_${endCh},${Math.sqrt(3*N).toFixed(3)}\n`;
+  }
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.setAttribute('href', url);
+  a.setAttribute('download', `Task1_Frequency_Plan_N${N}.csv`);
+  a.click();
+}
+
+window.onload = function() {
+  updateTask1();
+};
+
+  </script>
+</body>
+</html>

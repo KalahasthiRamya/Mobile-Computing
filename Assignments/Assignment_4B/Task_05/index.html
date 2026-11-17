@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignment 4B - Task 05: Three Power Engineers, One Device</title>
+  <style>
+
+:root {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-card: #1e293b;
+  --bg-card-hover: #273548;
+  --border-color: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --purple: #8b5cf6;
+  --cyan: #06b6d4;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  padding: 24px;
+  min-height: 100vh;
+}
+.container { max-width: 1300px; margin: 0 auto; }
+header {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.badge-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.badge-blue { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+.badge-green { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+.badge-purple { background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.4); }
+.badge-amber { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+
+h1 { font-size: 1.85rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.subtitle { color: var(--text-secondary); font-size: 0.95rem; }
+
+.nav-controls { display: flex; gap: 10px; align-items: center; }
+.btn {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.btn:hover { background: var(--bg-card-hover); border-color: var(--accent); }
+.btn-primary { background: var(--accent); color: white; border: none; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-success { background: var(--success); color: white; border: none; }
+.btn-success:hover { opacity: 0.9; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+@media (max-width: 900px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.card h2 {
+  font-size: 1.15rem;
+  margin-bottom: 14px;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+.metric-box {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-color);
+  padding: 14px;
+  border-radius: 8px;
+  text-align: center;
+}
+.metric-value { font-size: 1.6rem; font-weight: 700; color: var(--accent); margin-top: 4px; }
+.metric-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; }
+
+.control-group { margin-bottom: 16px; }
+.control-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.control-group input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+.control-group select, .control-group input[type="number"], .control-group input[type="text"] {
+  width: 100%;
+  background: #0f172a;
+  border: 1px solid var(--border-color);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+.slider-val { float: right; font-weight: 600; color: var(--accent); }
+
+pre.pseudocode {
+  background: #0b1120;
+  color: #38bdf8;
+  padding: 16px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  border: 1px solid #1e293b;
+  max-height: 380px;
+}
+pre.log-terminal {
+  background: #090d16;
+  color: #a3e635;
+  padding: 14px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+}
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 0.875rem;
+}
+table.data-table th, table.data-table td {
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  text-align: left;
+}
+table.data-table th { background: rgba(30, 41, 59, 0.8); color: #cbd5e1; font-weight: 600; }
+table.data-table tr:hover { background: rgba(51, 65, 85, 0.3); }
+
+canvas {
+  background: #0b1120;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  width: 100%;
+  height: 360px;
+  display: block;
+}
+
+.math-block {
+  background: rgba(30, 41, 59, 0.5);
+  border-left: 3px solid var(--accent);
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: #e2e8f0;
+}
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+.tab-btn {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <div class="badge-group">
+          <span class="badge badge-blue">Mobile Systems Engineering (CO4 Part II)</span>
+          <span class="badge badge-purple">Assignment 4B</span>
+          <span class="badge badge-green">Task 05 / 06</span>
+          <span class="badge badge-amber">7 Marks</span>
+        </div>
+        <h1>Task 05: Three Power Engineers, One Device</h1>
+        <div class="subtitle">DVFS vs Doze mode vs wakelock batching, conflicting layer stress testing, and enterprise fleet power strategies</div>
+      </div>
+      <div class="nav-controls">
+        <a href="../../index.html" class="btn">🏠 Master Hub</a>
+        <a href="../Task_04/index.html" class="btn">⬅️ Previous</a>
+        <a href="../Task_06/index.html" class="btn btn-primary">Next ➡️</a>
+      </div>
+    </header>
+
+    
+<div class="grid-2">
+  <div class="card">
+    <h2>🔋 Three Power Engineers, One Device: Multi-Layer Power Control (7 Marks)</h2>
+    <div class="math-block">
+      • <strong>Technique 1 (Hardware / Kernel):</strong> Dynamic Voltage and Frequency Scaling (DVFS) & big.LITTLE core offloading.<br>
+      • <strong>Technique 2 (Operating System):</strong> Doze Mode, App Standby Buckets, and background execution restrictions.<br>
+      • <strong>Technique 3 (Application):</strong> WorkManager batching, sensor hardware FIFO buffering, and network request coalescing.
+    </div>
+
+    <div class="control-group" style="margin-top: 14px;">
+      <label>Power Strategy Combination:</label>
+      <select id="pwrCombo" onchange="runPowerSim()">
+        <option value="none">Baseline: Perpetual Partial WakeLock (Unoptimized)</option>
+        <option value="conflict">Stress Test: Conflicting WakeLock vs Doze Mode</option>
+        <option value="optimal" selected>Optimized: WorkManager Batching + Hardware Sensor FIFO</option>
+      </select>
+    </div>
+
+    <div class="grid-3" style="margin-top: 14px;">
+      <div class="metric-box">
+        <div class="metric-label">Wake-Up Count</div>
+        <div class="metric-value" id="m-pwr-wake">2 / hr</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">Radio Active Time</div>
+        <div class="metric-value" id="m-pwr-radio">18 s / hr</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">Estimated Battery Drain</div>
+        <div class="metric-value" style="color: #10b981;" id="m-pwr-drain">1.8% / hr</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>⚠️ Stress Test: Can Layer Behavior Nullify Power Savings?</h2>
+    <div class="math-block" style="border-left-color: #ef4444;">
+      <strong>The Conflict Observation:</strong><br>
+      YES. A power-saving feature at the OS level (such as Doze Mode) can be <strong>completely nullified</strong> by application behavior.<br>
+      • When an application holds an unreleased <code>PARTIAL_WAKE_LOCK</code>, the Android PowerManagerService refuses to enter Deep Sleep.<br>
+      • Even though the screen is off and the user has not touched the device for hours, the CPU stays locked in the C0 power state at 1.8 GHz, draining the battery at <strong>12.5% per hour</strong>!
+    </div>
+
+    <h2 style="margin-top: 14px;">🏭 Industry Deployment Decision</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Deployment Profile</th>
+          <th>Dominant Power Mechanism</th>
+          <th>Engineering Justification</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>A. Always-On Field Tracker</strong></td>
+          <td>Technique 3: Hardware Sensor Batching</td>
+          <td>Allows main SoC to sleep 98% of the time while accelerometer collects steps.</td>
+        </tr>
+        <tr>
+          <td><strong>B. Gaming / Media Device</strong></td>
+          <td>Technique 1: DVFS Governor</td>
+          <td>Dynamically scales GPU/CPU frequency to avoid thermal throttling.</td>
+        </tr>
+        <tr>
+          <td><strong>C. Enterprise Fleet (5,000 devices)</strong></td>
+          <td>Technique 2: App Standby Buckets</td>
+          <td>OS automatically throttles non-business apps to the RESTRICTED bucket.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+  </div>
+
+  <script>
+
+function runPowerSim() {
+  const c = document.getElementById('pwrCombo').value;
+  if (c === 'none') {
+    document.getElementById('m-pwr-wake').innerText = "120 / hr";
+    document.getElementById('m-pwr-radio').innerText = "420 s / hr";
+    document.getElementById('m-pwr-drain').innerText = "14.2% / hr";
+  } else if (c === 'conflict') {
+    document.getElementById('m-pwr-wake').innerText = "60 / hr";
+    document.getElementById('m-pwr-radio').innerText = "180 s / hr";
+    document.getElementById('m-pwr-drain').innerText = "11.8% / hr (Defeated)";
+  } else {
+    // optimal
+    document.getElementById('m-pwr-wake').innerText = "2 / hr";
+    document.getElementById('m-pwr-radio').innerText = "18 s / hr";
+    document.getElementById('m-pwr-drain').innerText = "1.8% / hr (Full Day OK)";
+  }
+}
+
+window.onload = function() {
+  runPowerSim();
+};
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignment 1 - Task 07: Solve the Recurrence and Interpret the Result</title>
+  <style>
+
+:root {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-card: #1e293b;
+  --bg-card-hover: #273548;
+  --border-color: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --purple: #8b5cf6;
+  --cyan: #06b6d4;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  padding: 24px;
+  min-height: 100vh;
+}
+.container { max-width: 1300px; margin: 0 auto; }
+header {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.badge-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.badge-blue { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+.badge-green { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+.badge-purple { background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.4); }
+.badge-amber { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+
+h1 { font-size: 1.85rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.subtitle { color: var(--text-secondary); font-size: 0.95rem; }
+
+.nav-controls { display: flex; gap: 10px; align-items: center; }
+.btn {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.btn:hover { background: var(--bg-card-hover); border-color: var(--accent); }
+.btn-primary { background: var(--accent); color: white; border: none; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-success { background: var(--success); color: white; border: none; }
+.btn-success:hover { opacity: 0.9; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+@media (max-width: 900px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.card h2 {
+  font-size: 1.15rem;
+  margin-bottom: 14px;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+.metric-box {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-color);
+  padding: 14px;
+  border-radius: 8px;
+  text-align: center;
+}
+.metric-value { font-size: 1.6rem; font-weight: 700; color: var(--accent); margin-top: 4px; }
+.metric-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; }
+
+.control-group { margin-bottom: 16px; }
+.control-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.control-group input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+.control-group select, .control-group input[type="number"], .control-group input[type="text"] {
+  width: 100%;
+  background: #0f172a;
+  border: 1px solid var(--border-color);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+.slider-val { float: right; font-weight: 600; color: var(--accent); }
+
+pre.pseudocode {
+  background: #0b1120;
+  color: #38bdf8;
+  padding: 16px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  border: 1px solid #1e293b;
+  max-height: 380px;
+}
+pre.log-terminal {
+  background: #090d16;
+  color: #a3e635;
+  padding: 14px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+}
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 0.875rem;
+}
+table.data-table th, table.data-table td {
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  text-align: left;
+}
+table.data-table th { background: rgba(30, 41, 59, 0.8); color: #cbd5e1; font-weight: 600; }
+table.data-table tr:hover { background: rgba(51, 65, 85, 0.3); }
+
+canvas {
+  background: #0b1120;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  width: 100%;
+  height: 360px;
+  display: block;
+}
+
+.math-block {
+  background: rgba(30, 41, 59, 0.5);
+  border-left: 3px solid var(--accent);
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: #e2e8f0;
+}
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+.tab-btn {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <div class="badge-group">
+          <span class="badge badge-blue">Mobile Computing (CO1)</span>
+          <span class="badge badge-purple">Assignment 1</span>
+          <span class="badge badge-green">Task 07 / 12</span>
+          <span class="badge badge-amber">4 Marks</span>
+        </div>
+        <h1>Task 07: Solve the Recurrence and Interpret the Result</h1>
+        <div class="subtitle">Closed-form solution k = ceil(log4(D/C0)), mobility handoff escalation, and power reduction trade-offs</div>
+      </div>
+      <div class="nav-controls">
+        <a href="../../index.html" class="btn">🏠 Master Hub</a>
+        <a href="../Task_06/index.html" class="btn">⬅️ Previous</a>
+        <a href="../Task_08/index.html" class="btn btn-primary">Next ➡️</a>
+      </div>
+    </header>
+
+    
+<div class="grid-2">
+  <div class="card">
+    <h2>📝 Closed-Form Solution by Iteration / Substitution</h2>
+    <div class="math-block">
+      <strong>Derivation of Minimum Rounds k:</strong><br>
+      Let initial system capacity be $C_0$ Erlangs and target subscriber traffic demand be $D$ Erlangs.<br>
+      From Task 6, each round of uniform splitting multiplies capacity by 4:<br>
+      $$C(k) = 4^k \cdot C_0$$
+      To satisfy demand $C(k) \ge D$:<br>
+      $$4^k \cdot C_0 \ge D \implies 4^k \ge \frac{D}{C_0} \implies k \ge \log_4\left(\frac{D}{C_0}\right)$$
+      Since splitting rounds must be integer values:<br>
+      $$k = \left\lceil \log_4\left(\frac{D}{C_0}\right) \right\rceil = \left\lceil \frac{\ln(D / C_0)}{\ln 4} \right\rceil$$
+    </div>
+
+    <div class="math-block">
+      <strong>Selective Splitting Closed Form:</strong><br>
+      For selective splitting with overload fraction $\alpha$:<br>
+      $$k_{sel} = \left\lceil \log_{1 + 3\alpha}\left(\frac{D}{C_0}\right) \right\rceil$$
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🚗 Mobility, Handoff & Cost Consequences</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Rounds k</th>
+          <th>Radius R</th>
+          <th>Capacity C(k)</th>
+          <th>Tx Power (W)</th>
+          <th>Handoff Rate H</th>
+        </tr>
+      </thead>
+      <tbody id="roundTable">
+        <!-- Generated dynamically -->
+      </tbody>
+    </table>
+
+    <div class="math-block" style="margin-top: 14px;">
+      <strong>The Mobility Penalty:</strong><br>
+      As radius shrinks ($R_k = R_0 / 2^k$), the cell boundary crossing rate scales as $H_k \propto \frac{v}{R_k} = 2^k \cdot H_0$.<br>
+      At $k=3$, handoffs increase by <strong>$8\times$</strong>, placing severe signaling load on the MSC/VLR.
+    </div>
+  </div>
+</div>
+
+
+  </div>
+
+  <script>
+
+function generateTask7Table() {
+  const tbody = document.getElementById('roundTable');
+  tbody.innerHTML = '';
+  const C0 = 150;
+  const P0 = 40; // Watts
+  const H0 = 1.0;
+
+  for (let k = 0; k <= 3; k++) {
+    const R = (1.0 / Math.pow(2, k)).toFixed(3) + " km";
+    const C = (C0 * Math.pow(4, k)).toLocaleString() + " E";
+    const P = (P0 / Math.pow(2, 3.5 * k)).toFixed(2) + " W";
+    const H = Math.pow(2, k) + "x";
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>k = ${k}</strong></td>
+      <td>${R}</td>
+      <td style="color: #60a5fa; font-weight:600;">${C}</td>
+      <td>${P}</td>
+      <td style="color: #f59e0b; font-weight:600;">${H}</td>
+    `;
+    tbody.appendChild(tr);
+  }
+}
+
+window.onload = function() {
+  generateTask7Table();
+};
+
+  </script>
+</body>
+</html>

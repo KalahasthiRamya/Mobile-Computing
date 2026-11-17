@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignment 3 - Q01: Wireless Network Architecture and Mobility Analysis</title>
+  <style>
+
+:root {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-card: #1e293b;
+  --bg-card-hover: #273548;
+  --border-color: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --purple: #8b5cf6;
+  --cyan: #06b6d4;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  padding: 24px;
+  min-height: 100vh;
+}
+.container { max-width: 1300px; margin: 0 auto; }
+header {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.badge-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.badge-blue { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+.badge-green { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+.badge-purple { background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.4); }
+.badge-amber { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+
+h1 { font-size: 1.85rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.subtitle { color: var(--text-secondary); font-size: 0.95rem; }
+
+.nav-controls { display: flex; gap: 10px; align-items: center; }
+.btn {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.btn:hover { background: var(--bg-card-hover); border-color: var(--accent); }
+.btn-primary { background: var(--accent); color: white; border: none; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-success { background: var(--success); color: white; border: none; }
+.btn-success:hover { opacity: 0.9; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+@media (max-width: 900px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.card h2 {
+  font-size: 1.15rem;
+  margin-bottom: 14px;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+.metric-box {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-color);
+  padding: 14px;
+  border-radius: 8px;
+  text-align: center;
+}
+.metric-value { font-size: 1.6rem; font-weight: 700; color: var(--accent); margin-top: 4px; }
+.metric-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; }
+
+.control-group { margin-bottom: 16px; }
+.control-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.control-group input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+.control-group select, .control-group input[type="number"], .control-group input[type="text"] {
+  width: 100%;
+  background: #0f172a;
+  border: 1px solid var(--border-color);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+.slider-val { float: right; font-weight: 600; color: var(--accent); }
+
+pre.pseudocode {
+  background: #0b1120;
+  color: #38bdf8;
+  padding: 16px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  border: 1px solid #1e293b;
+  max-height: 380px;
+}
+pre.log-terminal {
+  background: #090d16;
+  color: #a3e635;
+  padding: 14px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+}
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 0.875rem;
+}
+table.data-table th, table.data-table td {
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  text-align: left;
+}
+table.data-table th { background: rgba(30, 41, 59, 0.8); color: #cbd5e1; font-weight: 600; }
+table.data-table tr:hover { background: rgba(51, 65, 85, 0.3); }
+
+canvas {
+  background: #0b1120;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  width: 100%;
+  height: 360px;
+  display: block;
+}
+
+.math-block {
+  background: rgba(30, 41, 59, 0.5);
+  border-left: 3px solid var(--accent);
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: #e2e8f0;
+}
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+.tab-btn {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <div class="badge-group">
+          <span class="badge badge-blue">Mobile Computing (CO3)</span>
+          <span class="badge badge-purple">Assignment 3 (Pair Work)</span>
+          <span class="badge badge-green">Question 01 / 07</span>
+          <span class="badge badge-amber">6 Marks</span>
+        </div>
+        <h1>Question 01: Wireless Network Architecture and Mobility Analysis</h1>
+        <div class="subtitle">Pair investigation: Student A network architecture vs Student B mobility handoff & packet loss analysis</div>
+      </div>
+      <div class="nav-controls">
+        <a href="../../index.html" class="btn">🏠 Master Hub</a>
+        <a href="../../index.html" class="btn">⬅️ Previous</a>
+        <a href="../Question_02/index.html" class="btn btn-primary">Next ➡️</a>
+      </div>
+    </header>
+
+    
+<div class="grid-2">
+  <div class="card">
+    <h2>👥 Pair Work Partition: Student A vs Student B</h2>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchStudentTab('studA')">Student A: Network Architecture</button>
+      <button class="tab-btn" onclick="switchStudentTab('studB')">Student B: Mobility & Performance</button>
+    </div>
+
+    <div id="tab-studA">
+      <div class="math-block">
+        <strong>Student A Responsibilities:</strong><br>
+        • <em>Network Components:</em> Mobile Nodes (MN), Access Points (AP1, AP2), Distribution System (DS), Authentication Gateway.<br>
+        • <em>Physical Characteristics:</em> 802.11 Wi-Fi, 2.4/5 GHz channels, path loss $PL(d) = 20\log_{10}(f) + 10 n \log_{10}(d)$.<br>
+        • <em>Bandwidth Constraints:</em> Shared contention window, throughput drops with distance due to adaptive rate scaling (MCS).
+      </div>
+    </div>
+
+    <div id="tab-studB" style="display:none;">
+      <div class="math-block">
+        <strong>Student B Responsibilities:</strong><br>
+        • <em>Mobility Scenario:</em> Mobile user traverses boundary between AP1 (Campus Center) and AP2 (Hostel Quad).<br>
+        • <em>Handoff Decision Logic:</em> Triggered when $RSSI_{AP1} < -75	ext{ dBm}$ AND $RSSI_{AP2} > RSSI_{AP1} + 5	ext{ dB}$ (Hysteresis margin to prevent ping-pong).<br>
+        • <em>Performance Metrics:</em> Scanning delay ($pprox 50	ext{ ms}$), re-association latency, and packet drops.
+      </div>
+    </div>
+
+    <div class="control-group" style="margin-top: 14px;">
+      <label>Mobile Node Speed (km/h): <span class="slider-val" id="valSpeed">5 km/h (Walking)</span></label>
+      <input type="range" id="sliderSpeed" min="2" max="60" step="2" value="5" oninput="updateSpeed()">
+    </div>
+
+    <div style="display: flex; gap: 8px; margin-top: 10px;">
+      <button class="btn btn-primary" onclick="toggleMobilitySim()">▶️ Start Mobile Trajectory</button>
+      <button class="btn" onclick="resetMobilitySim()">🔄 Reset Position</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📡 Live Handoff & RSSI Coverage Simulator</h2>
+    <canvas id="handoffCanvas" width="560" height="260"></canvas>
+    
+    <div class="grid-3" style="margin-top: 12px;">
+      <div class="metric-box">
+        <div class="metric-label">Active Connection</div>
+        <div class="metric-value" style="font-size: 1.2rem; color: #10b981;" id="m-active-ap">AP1 (Ch 1)</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">Instantaneous RSSI</div>
+        <div class="metric-value" id="m-curr-rssi">-62 dBm</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">Packets Lost in Handoff</div>
+        <div class="metric-value" style="color: #ef4444;" id="m-lost-pkts">0 Pkts</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>📜 Student B Mobility Decision Algorithm (SIMATS Pseudocode)</h2>
+  <pre class="pseudocode">ALGORITHM EvaluateHandoffDecision(MN, CurrentAP, CandidateAPList, HysteresisDelta, MinThreshold)
+INPUT:
+  MN – mobile node
+  CurrentAP – currently associated access point
+  CandidateAPList – set of detected AP beacons
+  HysteresisDelta – margin to prevent ping-pong (e.g. 5 dB)
+  MinThreshold – minimum acceptable signal (-75 dBm)
+OUTPUT:
+  HandoffDecision (TRIGGER_HANDOFF or MAINTAIN_CONNECTION)
+BEGIN
+  CurrentRSSI ← MeasureRSSI(CurrentAP)
+  IF CurrentRSSI ≥ MinThreshold THEN
+    RETURN MAINTAIN_CONNECTION
+  END IF
+  BestCandidate ← NULL
+  MaxRSSI ← -INFINITY
+  FOR each AP in CandidateAPList DO
+    BeaconRSSI ← MeasureRSSI(AP)
+    IF BeaconRSSI > MaxRSSI THEN
+      MaxRSSI ← BeaconRSSI
+      BestCandidate ← AP
+    END IF
+  END FOR
+  IF MaxRSSI > (CurrentRSSI + HysteresisDelta) THEN
+    PERFORM_SCAN_AND_ASSOCIATE(MN, BestCandidate)
+    RETURN TRIGGER_HANDOFF
+  END IF
+  RETURN MAINTAIN_CONNECTION
+END</pre>
+</div>
+
+
+  </div>
+
+  <script>
+
+let mnX = 140;
+let isMoving = false;
+let moveInterval = null;
+let lostPackets = 0;
+let currentAP = "AP1";
+
+function switchStudentTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-studA').style.display = (tab === 'studA') ? 'block' : 'none';
+  document.getElementById('tab-studB').style.display = (tab === 'studB') ? 'block' : 'none';
+}
+
+function updateSpeed() {
+  const s = parseInt(document.getElementById('sliderSpeed').value);
+  document.getElementById('valSpeed').innerText = s + (s <= 6 ? " km/h (Walking)" : " km/h (Vehicle)");
+}
+
+function drawHandoff() {
+  const canvas = document.getElementById('handoffCanvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const ap1X = 120, ap1Y = 130;
+  const ap2X = 440, ap2Y = 130;
+  const radius = 170;
+
+  // Draw AP1 Coverage
+  ctx.fillStyle = 'rgba(59, 130, 246, 0.15)';
+  ctx.beginPath(); ctx.arc(ap1X, ap1Y, radius, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#3b82f6'; ctx.stroke();
+  ctx.fillStyle = '#60a5fa'; ctx.fillText('AP1 (2.4 GHz, Ch 1)', ap1X - 45, ap1Y - 20);
+  ctx.beginPath(); ctx.arc(ap1X, ap1Y, 8, 0, Math.PI * 2); ctx.fill();
+
+  // Draw AP2 Coverage
+  ctx.fillStyle = 'rgba(16, 185, 129, 0.15)';
+  ctx.beginPath(); ctx.arc(ap2X, ap2Y, radius, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#10b981'; ctx.stroke();
+  ctx.fillStyle = '#34d399'; ctx.fillText('AP2 (2.4 GHz, Ch 6)', ap2X - 45, ap2Y - 20);
+  ctx.beginPath(); ctx.arc(ap2X, ap2Y, 8, 0, Math.PI * 2); ctx.fill();
+
+  // Draw Mobile Node
+  ctx.fillStyle = '#facc15';
+  ctx.beginPath(); ctx.arc(mnX, 130, 9, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.fillStyle = '#fff'; ctx.fillText('MN', mnX - 8, 115);
+
+  // Connection line
+  ctx.strokeStyle = currentAP === 'AP1' ? '#3b82f6' : '#10b981';
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(mnX, 130);
+  ctx.lineTo(currentAP === 'AP1' ? ap1X : ap2X, ap1Y);
+  ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function toggleMobilitySim() {
+  if (isMoving) {
+    clearInterval(moveInterval);
+    isMoving = false;
+  } else {
+    isMoving = true;
+    moveInterval = setInterval(() => {
+      const speed = parseInt(document.getElementById('sliderSpeed').value);
+      mnX += (speed * 0.4);
+      if (mnX > 480) mnX = 120;
+
+      // Calculate RSSI
+      const d1 = Math.abs(mnX - 120);
+      const d2 = Math.abs(mnX - 440);
+      const rssi1 = Math.round(-40 - 20 * Math.log10(Math.max(5, d1)));
+      const rssi2 = Math.round(-40 - 20 * Math.log10(Math.max(5, d2)));
+
+      // Handoff check
+      if (currentAP === 'AP1' && rssi1 < -72 && rssi2 > (rssi1 + 5)) {
+        currentAP = 'AP2';
+        lostPackets += Math.floor(Math.random() * 3 + 1);
+      } else if (currentAP === 'AP2' && rssi2 < -72 && rssi1 > (rssi2 + 5)) {
+        currentAP = 'AP1';
+        lostPackets += Math.floor(Math.random() * 3 + 1);
+      }
+
+      document.getElementById('m-active-ap').innerText = currentAP === 'AP1' ? "AP1 (Ch 1)" : "AP2 (Ch 6)";
+      document.getElementById('m-curr-rssi').innerText = (currentAP === 'AP1' ? rssi1 : rssi2) + " dBm";
+      document.getElementById('m-lost-pkts').innerText = lostPackets + " Pkts";
+
+      drawHandoff();
+    }, 100);
+  }
+}
+
+function resetMobilitySim() {
+  clearInterval(moveInterval);
+  isMoving = false;
+  mnX = 140;
+  lostPackets = 0;
+  currentAP = "AP1";
+  drawHandoff();
+  document.getElementById('m-active-ap').innerText = "AP1 (Ch 1)";
+  document.getElementById('m-curr-rssi').innerText = "-52 dBm";
+  document.getElementById('m-lost-pkts').innerText = "0 Pkts";
+}
+
+window.onload = function() {
+  drawHandoff();
+};
+
+  </script>
+</body>
+</html>

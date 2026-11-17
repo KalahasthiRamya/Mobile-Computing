@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignment 1 - Task 02: Identify the Governing Design Parameter</title>
+  <style>
+
+:root {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-card: #1e293b;
+  --bg-card-hover: #273548;
+  --border-color: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --purple: #8b5cf6;
+  --cyan: #06b6d4;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  padding: 24px;
+  min-height: 100vh;
+}
+.container { max-width: 1300px; margin: 0 auto; }
+header {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.badge-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.badge-blue { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+.badge-green { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+.badge-purple { background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.4); }
+.badge-amber { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+
+h1 { font-size: 1.85rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.subtitle { color: var(--text-secondary); font-size: 0.95rem; }
+
+.nav-controls { display: flex; gap: 10px; align-items: center; }
+.btn {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.btn:hover { background: var(--bg-card-hover); border-color: var(--accent); }
+.btn-primary { background: var(--accent); color: white; border: none; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-success { background: var(--success); color: white; border: none; }
+.btn-success:hover { opacity: 0.9; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+@media (max-width: 900px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.card h2 {
+  font-size: 1.15rem;
+  margin-bottom: 14px;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+.metric-box {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-color);
+  padding: 14px;
+  border-radius: 8px;
+  text-align: center;
+}
+.metric-value { font-size: 1.6rem; font-weight: 700; color: var(--accent); margin-top: 4px; }
+.metric-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; }
+
+.control-group { margin-bottom: 16px; }
+.control-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.control-group input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+.control-group select, .control-group input[type="number"], .control-group input[type="text"] {
+  width: 100%;
+  background: #0f172a;
+  border: 1px solid var(--border-color);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+.slider-val { float: right; font-weight: 600; color: var(--accent); }
+
+pre.pseudocode {
+  background: #0b1120;
+  color: #38bdf8;
+  padding: 16px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  border: 1px solid #1e293b;
+  max-height: 380px;
+}
+pre.log-terminal {
+  background: #090d16;
+  color: #a3e635;
+  padding: 14px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+}
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 0.875rem;
+}
+table.data-table th, table.data-table td {
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  text-align: left;
+}
+table.data-table th { background: rgba(30, 41, 59, 0.8); color: #cbd5e1; font-weight: 600; }
+table.data-table tr:hover { background: rgba(51, 65, 85, 0.3); }
+
+canvas {
+  background: #0b1120;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  width: 100%;
+  height: 360px;
+  display: block;
+}
+
+.math-block {
+  background: rgba(30, 41, 59, 0.5);
+  border-left: 3px solid var(--accent);
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: #e2e8f0;
+}
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+.tab-btn {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <div class="badge-group">
+          <span class="badge badge-blue">Mobile Computing (CO1)</span>
+          <span class="badge badge-purple">Assignment 1</span>
+          <span class="badge badge-green">Task 02 / 12</span>
+          <span class="badge badge-amber">2 Marks</span>
+        </div>
+        <h1>Task 02: Identify the Governing Design Parameter</h1>
+        <div class="subtitle">Analysis of cluster size N, reuse ratio Q, and radius R across 1k to 100k+ subscribers</div>
+      </div>
+      <div class="nav-controls">
+        <a href="../../index.html" class="btn">🏠 Master Hub</a>
+        <a href="../Task_01/index.html" class="btn">⬅️ Previous</a>
+        <a href="../Task_03/index.html" class="btn btn-primary">Next ➡️</a>
+      </div>
+    </header>
+
+    
+<div class="grid-2">
+  <div class="card">
+    <h2>🎯 Dominant Governing Design Parameters</h2>
+    <p>Which single quantity most strongly controls capacity and interference for each strategy, and why should the analysis be built around it?</p>
+    
+    <table class="data-table" style="margin-top: 14px;">
+      <thead>
+        <tr>
+          <th>Strategy</th>
+          <th>Dominant Parameter</th>
+          <th>Control Role & Capacity/SIR Impact</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Fixed Cluster Reuse</strong></td>
+          <td><span class="badge badge-blue">Cluster Size N</span></td>
+          <td>Controls reuse ratio $Q = \sqrt{3N}$. Dictates channels per cell ($C = 336/N$) and SIR ($SIR \propto N^{n/2}$).</td>
+        </tr>
+        <tr>
+          <td><strong>Sectorised Reuse</strong></td>
+          <td><span class="badge badge-purple">Sectoring Angle &beta;</span></td>
+          <td>Reduces number of co-channel interferers $M_I$ ($360^\circ 	o 6$, $120^\circ 	o 2$, $60^\circ 	o 1$). Allows lower $N$.</td>
+        </tr>
+        <tr>
+          <td><strong>Dynamic Channel Borrowing</strong></td>
+          <td><span class="badge badge-amber">Borrowing Threshold &theta;</span></td>
+          <td>Controls when idle channels are borrowed from adjacent tiers without causing carrier lockouts.</td>
+        </tr>
+        <tr>
+          <td><strong>Repeated Cell Splitting</strong></td>
+          <td><span class="badge badge-green">Cell Radius R</span></td>
+          <td>Controls cell area $A \propto R^2$ and total cells $N_c \propto 1/R^2$. Multiplies total system capacity by $4^k$.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="control-group" style="margin-top: 18px;">
+      <label>Subscriber Growth Planning Horizon (1,000 to 100,000+): <span class="slider-val" id="subVal">10,000</span></label>
+      <input type="range" id="subSlider" min="1000" max="100000" step="1000" value="10000" oninput="updateTask2()">
+    </div>
+
+    <div class="control-group">
+      <label>Path Loss Exponent n (2.5 - Open Campus to 4.0 - Built-up): <span class="slider-val" id="nVal">3.5</span></label>
+      <input type="range" id="nSlider" min="2.5" max="4.0" step="0.1" value="3.5" oninput="updateTask2()">
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📈 Parameter Trajectory Across Subscriber Growth</h2>
+    <canvas id="paramCanvas" width="560" height="300"></canvas>
+    <div class="grid-3" style="margin-top: 14px;">
+      <div class="metric-box">
+        <div class="metric-label">Total Offered Traffic</div>
+        <div class="metric-value" id="m-traffic">250 E</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">Required Cell Radius R</div>
+        <div class="metric-value" id="m-rad">0.82 km</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">Splitting Rounds k</div>
+        <div class="metric-value" id="m-split">1</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>🔍 Engineering Interpretation: Why Build Analysis Around Governing Parameter?</h2>
+  <div class="math-block">
+    <strong>Mathematical Relationship:</strong><br>
+    Offered Traffic $A_{total} = M 	imes 0.025	ext{ Erlang}$. For $M = 1,000$, $A_{total} = 25	ext{ Erlang}$; easily served by 1 macro-cluster without splitting.<br>
+    For $M = 100,000$, $A_{total} = 2,500	ext{ Erlang}$. Since the total spectrum is strictly fixed at 336 channels (yielding at most $pprox 315$ Erlangs per cluster), <strong>neither N nor sectoring can support 2,500 Erlang in 12 km² alone</strong>.<br>
+    Therefore, <strong>Cell Radius R</strong> becomes the absolute governing design parameter, driving geometric area reduction via $A_{cell} \propto R^2$ and cell density $N_c \propto 1/R^2$.
+  </div>
+</div>
+
+
+  </div>
+
+  <script>
+
+function updateTask2() {
+  const subs = parseInt(document.getElementById('subSlider').value);
+  const n = parseFloat(document.getElementById('nSlider').value);
+  document.getElementById('subVal').innerText = subs.toLocaleString();
+  document.getElementById('nVal').innerText = n.toFixed(1);
+
+  const traffic = subs * 0.025;
+  document.getElementById('m-traffic').innerText = traffic.toFixed(1) + " E";
+
+  // Base cluster capacity ~ 300 Erlang for 336 channels across 1 cluster
+  const k = Math.max(0, Math.ceil(Math.log(Math.max(1, traffic / 120)) / Math.log(4)));
+  const baseR = 1.2; // km
+  const r = (baseR / Math.pow(2, k)).toFixed(2);
+
+  document.getElementById('m-rad').innerText = r + " km";
+  document.getElementById('m-split').innerText = k;
+
+  drawParamChart(subs, n);
+}
+
+function drawParamChart(subs, n) {
+  const canvas = document.getElementById('paramCanvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw chart axes
+  ctx.strokeStyle = '#334155';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(50, 20); ctx.lineTo(50, 260); ctx.lineTo(540, 260);
+  ctx.stroke();
+
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '10px sans-serif';
+  ctx.fillText('1k', 50, 275);
+  ctx.fillText('10k', 170, 275);
+  ctx.fillText('20k', 280, 275);
+  ctx.fillText('50k', 400, 275);
+  ctx.fillText('100k', 510, 275);
+  ctx.fillText('Subscribers', 280, 292);
+
+  // Plot required base stations (1/R^2)
+  ctx.strokeStyle = '#3b82f6';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  const subPoints = [1000, 5000, 10000, 20000, 50000, 100000];
+  subPoints.forEach((s, idx) => {
+    const x = 50 + (idx / (subPoints.length - 1)) * 480;
+    const t = s * 0.025;
+    const cells = Math.max(4, Math.round(t / 25));
+    const y = 260 - Math.min(230, cells * 2.2);
+    if (idx === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // Plot cell radius R
+  ctx.strokeStyle = '#10b981';
+  ctx.beginPath();
+  subPoints.forEach((s, idx) => {
+    const x = 50 + (idx / (subPoints.length - 1)) * 480;
+    const t = s * 0.025;
+    const k = Math.max(0, Math.ceil(Math.log(Math.max(1, t / 120)) / Math.log(4)));
+    const r = 1.2 / Math.pow(2, k);
+    const y = 260 - (r / 1.2) * 220;
+    if (idx === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // Legend
+  ctx.fillStyle = '#3b82f6';
+  ctx.fillRect(80, 30, 12, 12);
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillText('Number of Base Stations Nc (∝ 1/R²)', 100, 40);
+
+  ctx.fillStyle = '#10b981';
+  ctx.fillRect(80, 50, 12, 12);
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillText('Cell Radius R (km)', 100, 60);
+}
+
+window.onload = function() {
+  updateTask2();
+};
+
+  </script>
+</body>
+</html>

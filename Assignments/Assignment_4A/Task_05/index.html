@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignment 4A - Task 05: Power Management Reasoning</title>
+  <style>
+
+:root {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-card: #1e293b;
+  --bg-card-hover: #273548;
+  --border-color: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --purple: #8b5cf6;
+  --cyan: #06b6d4;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  padding: 24px;
+  min-height: 100vh;
+}
+.container { max-width: 1300px; margin: 0 auto; }
+header {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.badge-group { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.badge-blue { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+.badge-green { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+.badge-purple { background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.4); }
+.badge-amber { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+
+h1 { font-size: 1.85rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.subtitle { color: var(--text-secondary); font-size: 0.95rem; }
+
+.nav-controls { display: flex; gap: 10px; align-items: center; }
+.btn {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.btn:hover { background: var(--bg-card-hover); border-color: var(--accent); }
+.btn-primary { background: var(--accent); color: white; border: none; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-success { background: var(--success); color: white; border: none; }
+.btn-success:hover { opacity: 0.9; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+@media (max-width: 900px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.card h2 {
+  font-size: 1.15rem;
+  margin-bottom: 14px;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+.metric-box {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-color);
+  padding: 14px;
+  border-radius: 8px;
+  text-align: center;
+}
+.metric-value { font-size: 1.6rem; font-weight: 700; color: var(--accent); margin-top: 4px; }
+.metric-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; }
+
+.control-group { margin-bottom: 16px; }
+.control-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.control-group input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+.control-group select, .control-group input[type="number"], .control-group input[type="text"] {
+  width: 100%;
+  background: #0f172a;
+  border: 1px solid var(--border-color);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+.slider-val { float: right; font-weight: 600; color: var(--accent); }
+
+pre.pseudocode {
+  background: #0b1120;
+  color: #38bdf8;
+  padding: 16px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  border: 1px solid #1e293b;
+  max-height: 380px;
+}
+pre.log-terminal {
+  background: #090d16;
+  color: #a3e635;
+  padding: 14px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+}
+
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 0.875rem;
+}
+table.data-table th, table.data-table td {
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  text-align: left;
+}
+table.data-table th { background: rgba(30, 41, 59, 0.8); color: #cbd5e1; font-weight: 600; }
+table.data-table tr:hover { background: rgba(51, 65, 85, 0.3); }
+
+canvas {
+  background: #0b1120;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  width: 100%;
+  height: 360px;
+  display: block;
+}
+
+.math-block {
+  background: rgba(30, 41, 59, 0.5);
+  border-left: 3px solid var(--accent);
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: #e2e8f0;
+}
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+.tab-btn {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <div class="badge-group">
+          <span class="badge badge-blue">Mobile App Development (CO4 Part I)</span>
+          <span class="badge badge-purple">Assignment 4A</span>
+          <span class="badge badge-green">Task 05 / 06</span>
+          <span class="badge badge-amber">7 Marks</span>
+        </div>
+        <h1>Task 05: Power Management Reasoning</h1>
+        <div class="subtitle">Device power state machine, sensor batching to eliminate wakelocks, and 15% battery saver policy</div>
+      </div>
+      <div class="nav-controls">
+        <a href="../../index.html" class="btn">🏠 Master Hub</a>
+        <a href="../Task_04/index.html" class="btn">⬅️ Previous</a>
+        <a href="../Task_06/index.html" class="btn btn-primary">Next ➡️</a>
+      </div>
+    </header>
+
+    
+<div class="grid-2">
+  <div class="card">
+    <h2>🔋 Device Power-State Policy & Transition Model (3 Marks)</h2>
+    <p>A fitness application permanently holds a partial wake lock, causing rapid battery drain. Here is the formal state transition model:</p>
+    
+    <table class="data-table" style="margin-top: 12px;">
+      <thead>
+        <tr>
+          <th>Device State</th>
+          <th>Hardware & Kernel Activity</th>
+          <th>Entry Condition</th>
+          <th>Exit Condition</th>
+          <th>Allowed App Work</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>State 1: Active</strong></td>
+          <td>Screen ON, CPU cores active at high frequency (DVFS), GPU rendering.</td>
+          <td>User interaction, power button, active display.</td>
+          <td>Screen timeout (e.g. 30s) or power button press.</td>
+          <td>All foreground and background tasks permitted.</td>
+        </tr>
+        <tr>
+          <td><strong>State 2: Light Doze / Idle</strong></td>
+          <td>Screen OFF, CPU clocked down, network access throttled into maintenance windows.</td>
+          <td>Screen OFF for &gt; 5 min while device is stationary.</td>
+          <td>Motion detected or urgent high-priority FCM notification.</td>
+          <td>High-priority push only. Standard jobs deferred.</td>
+        </tr>
+        <tr>
+          <td><strong>State 3: Deep Doze / Suspended</strong></td>
+          <td>SoC enters deep sleep. Radios powered down. CPU clock halted.</td>
+          <td>Device stationary on battery for &gt; 30 min.</td>
+          <td>Significant motion sensor trigger or user wake.</td>
+          <td>Zero background execution. Periodic maintenance sync only.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>⚡ Task 5.2 & 5.3: Changed Assumptions & Battery-Saver Mode (4 Marks)</h2>
+    <div class="math-block">
+      <strong>Task 5.2: Receiving Urgent Notifications While Suspended:</strong><br>
+      • <em>Vulnerability:</em> Pure Deep Doze suspends all radio listen periods.<br>
+      • <em>Solution:</em> Mobile radio modem maintains ultra-low-power cellular paging channel. High-Priority FCM push wakes baseband processor, which asserts an IRQ to wake kernel for $< 2	ext{ seconds}$ to handle incoming alert.<br>
+      • <em>Application Fix:</em> App MUST release perpetual partial wake locks and switch to <strong>Sensor Batching (`FIFO_RESERVED_EVENT_COUNT`)</strong>, allowing CPU to sleep while sensor hub collects accelerometer steps in hardware buffer.
+    </div>
+
+    <div class="math-block" style="margin-top: 12px;">
+      <strong>Task 5.3: Battery Saver Mode at 15% Battery:</strong><br>
+      • <em>Kernel Level:</em> CPU governor throttled to `powersave` policy (caps maximum core frequency, disables big high-performance cores, leaves only LITTLE efficiency cores active).<br>
+      • <em>Runtime Level:</em> Postpones JIT compilation and heavy GC cycles.<br>
+      • <em>Application Level:</em> Disables non-urgent location updates, reduces screen refresh rate to 60Hz, disables background data sync.<br>
+      • <em>User Trade-off:</em> Background sync stops until app is opened. Acceptable to preserve critical emergency telephony calling.
+    </div>
+  </div>
+</div>
+
+
+  </div>
+
+  <script>
+
+// Standalone
+
+  </script>
+</body>
+</html>
